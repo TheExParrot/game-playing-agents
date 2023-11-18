@@ -10,4 +10,3 @@ class MiniMaxAgent(AbstractAgent):
     def get_next_action(self):
         # TO DO
         return
-
