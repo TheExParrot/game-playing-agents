@@ -9,8 +9,10 @@ class MiniMaxAgent(GameAgent):
             super().__init__(init_state, player)
         else:
             super().__init__(init_state, init_state.active_player)
-        self.depth = depth
+        self.max_depth = depth
 
     def get_next_action(self):
-        # TO DO - IMPLEMENT MINIMAX ALGORITHM
-        return
+        return self.minimax(0, -float('inf'), float('inf'))
+
+    def minimax(self, current_depth: int, alpha: float, beta: float):
+        ...
