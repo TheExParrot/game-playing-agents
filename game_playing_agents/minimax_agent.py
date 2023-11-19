@@ -1,5 +1,5 @@
-from state import GameState
-from game_agent import GameAgent
+from .state import GameState
+from .game_agent import GameAgent
 
 
 class MiniMaxAgent(GameAgent):
@@ -12,5 +12,5 @@ class MiniMaxAgent(GameAgent):
         self.depth = depth
 
     def get_next_action(self):
-        # TO DO
+        # TO DO - IMPLEMENT MINIMAX ALGORITHM
         return

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from state import GameState
+from .state import GameState
 
 
 class GameAgent(ABC):
