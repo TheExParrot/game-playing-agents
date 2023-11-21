@@ -13,7 +13,7 @@ class MiniMaxAgent(GameAgent):
 
     def get_next_action(self):
         root = MiniMaxNode(self.current_state, self.max_depth, self.player)
-        max_action = root.minimax_search()
+        max_action, max_value = root.minimax_search()
         return max_action
 
 
@@ -30,33 +30,53 @@ class MiniMaxNode:
         self.beta = float('inf')
 
     def minimax_search(self):
+        best_action = None
+
         # Base Case: If at depth or terminal state, return utility
         if self.node_depth == self.max_depth or self.state.is_terminal:
-            return self.state.utility[self.max_player]
+            return best_action, self.state.utility[self.max_player]
 
         # Recursive Maximise Case:
         if self.state.active_player == self.max_player:
             max_value = float('-inf')
             for action in self.state.legal_actions:
+                # get next node
                 next_state = self.state.get_next_state(action)
                 next_node = MiniMaxNode(next_state, self.max_depth, self.max_player, self.node_depth + 1, self)
-                max_value = max(max_value, next_node.minimax_search())
+                _, next_value = next_node.minimax_search()
+
+                # update best action with value
+                if next_value > max_value:
+                    max_value = next_value
+                    best_action = action
+
+                # check a-b pruning
                 self.alpha = max(self.alpha, max_value)
                 if self.alpha >= self.beta:
                     break
-            return max_value
+
+            return best_action, max_value
 
         # Recursive Minimise Case:
         else:
             min_value = float('inf')
             for action in self.state.legal_actions:
+                # get next node
                 next_state = self.state.get_next_state(action)
                 next_node = MiniMaxNode(next_state, self.max_depth, self.max_player, self.node_depth + 1, self)
-                min_value = min(min_value, next_node.minimax_search())
+                _, next_value = next_node.minimax_search()
+
+                # update best action with value
+                if next_value < min_value:
+                    min_value = next_value
+                    best_action = action
+
+                # check a-b pruning
                 self.beta = min(self.beta, min_value)
                 if self.alpha >= self.beta:
                     break
-            return min_value
+
+            return best_action, min_value
 
 
         

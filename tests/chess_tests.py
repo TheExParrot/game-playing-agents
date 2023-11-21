@@ -46,7 +46,7 @@ class ChessGameState(gpa.GameState):
 
     def get_winner(self) -> str:
         if self.board.is_checkmate():
-            return "white" if self.board.turn else "black"
+            return "black" if self.board.turn else "white"
         else:
             return ""
 
@@ -96,27 +96,65 @@ class TestChess(unittest.TestCase):
 
         # Play until game is over
         while not self.game_state.is_terminal:
-            # Determine White Move
-            white_action = white_agent.get_next_action()
-            self.assertTrue(white_action in self.game_state.legal_actions)
 
-            # Update Game State with White Move
-            self.game_state = self.game_state.get_next_state(white_action)
-            self.assertTrue(self.game_state.board.is_valid())
+            # White Turn
+            if self.game_state.board.turn:
+                # Determine White Action
+                white_action = white_agent.get_next_action()
+                self.assertTrue(white_action in self.game_state.legal_actions)
 
-            # Update Black Agent with new Game State
-            black_agent.current_state = self.game_state
+                # Update Game State with White Move
+                self.game_state = self.game_state.get_next_state(white_action)
+                self.assertTrue(self.game_state.board.is_valid())
 
-            # Determine Black Move
-            black_action = black_agent.get_next_action()
-            self.assertTrue(black_action in self.game_state.legal_actions)
+                # Update Black Agent with new Game State
+                black_agent.current_state = self.game_state
 
-            # Update Game State with Black Move
-            self.game_state = self.game_state.get_next_state(black_action)
-            self.assertTrue(self.game_state.board.is_valid())
+            # Black Turn
+            else:
+                # Determine Black Action
+                black_action = black_agent.get_next_action()
+                self.assertTrue(black_action in self.game_state.legal_actions)
 
-            # Update White Agent with new Game State
-            white_agent.current_state = self.game_state
+                # Update Game State with Black Move
+                self.game_state = self.game_state.get_next_state(black_action)
+                self.assertTrue(self.game_state.board.is_valid())
+
+                # Update White Agent with new Game State
+                white_agent.current_state = self.game_state
+
+    def test_minimax_vs_random(self):
+        white_agent = gpa.MiniMaxAgent(self.game_state, 2, "white")
+        black_agent = gpa.RandomAgent(self.game_state, "black")
+
+        # Play until game is over
+        while not self.game_state.is_terminal:
+
+            # White Turn
+            if self.game_state.board.turn:
+                # Determine White Action
+                white_action = white_agent.get_next_action()
+                self.assertTrue(white_action in self.game_state.legal_actions)
+
+                # Update Game State with White Move
+                self.game_state = self.game_state.get_next_state(white_action)
+                self.assertTrue(self.game_state.board.is_valid())
+
+                # Update Black Agent with new Game State
+                black_agent.current_state = self.game_state
+
+            # Black Turn
+            else:
+                # Determine Black Action
+                black_action = black_agent.get_next_action()
+                self.assertTrue(black_action in self.game_state.legal_actions)
+
+                # Update Game State with Black Move
+                self.game_state = self.game_state.get_next_state(black_action)
+                self.assertTrue(self.game_state.board.is_valid())
+
+                # Update White Agent with new Game State
+                white_agent.current_state = self.game_state
 
 
 if __name__ == '__main__':
