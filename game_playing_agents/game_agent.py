@@ -14,3 +14,6 @@ class GameAgent(ABC):
         :return: the action to take
         """
         ...
+
+    def update_state(self, new_state: GameState):
+        self.current_state = new_state
