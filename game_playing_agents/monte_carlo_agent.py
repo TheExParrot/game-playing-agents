@@ -17,7 +17,7 @@ class MonteCarloAgent(GameAgent):
     def get_next_action(self):
         root = MonteCarloNode(self.current_state, self.player)
 
-        while True:
+        for i in range(self.rollouts):
             # Selection
             selected_node = root.selection()
             # Expansion
@@ -27,12 +27,22 @@ class MonteCarloAgent(GameAgent):
             # Backpropagation
             expanded_node.backpropagation(simulation_result)
 
+        # Get the best action
+        max_action = None
+        max_value = float('-inf')
+        for child in root.children:
+            if child.v > max_value:
+                max_value = child.v
+                max_action = child.last_action
+        return max_action
+
 
 class MonteCarloNode:
 
-    def __init__(self, init_state: GameState, player: str, parent: 'MonteCarloNode' = None):
+    def __init__(self, init_state: GameState, player: str, last_action: any = None, parent: 'MonteCarloNode' = None):
         self.state = init_state
         self.children = set()  # type: set[MonteCarloNode]
+        self.last_action = last_action
         self.player = player
         self.parent = parent
         self.N = 0
@@ -45,7 +55,7 @@ class MonteCarloNode:
     def selection(self):
         """Select highest UCB until leaf node is reached"""
         current_node = self
-        while len(current_node.children) > 0:
+        while current_node.children:
             max_ucb = float('-inf')
             max_ucb_node = None
             for child in current_node.children:
@@ -58,9 +68,12 @@ class MonteCarloNode:
 
     def expansion(self, selected_node: 'MonteCarloNode'):
         """Expand Leaf Node with a new child"""
+        if self.state.is_terminal:
+            return self
+
         random_action = random.choice(self.state.legal_actions)
         next_state = self.state.get_next_state(random_action)
-        new_node = MonteCarloNode(next_state, self.player, selected_node)
+        new_node = MonteCarloNode(next_state, self.player, random_action, selected_node)
         selected_node.children.add(new_node)
         return new_node
 
@@ -80,3 +93,9 @@ class MonteCarloNode:
             current_node.n += 1
             current_node.v += simulation_result
             current_node = current_node.parent
+
+    def __hash__(self):
+        return hash(self.state)
+
+    def __eq__(self, other):
+        return self.state == other.state
