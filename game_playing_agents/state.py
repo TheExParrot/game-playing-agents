@@ -44,7 +44,6 @@ class GameState(ABC):
         ...
 
     @abstractmethod
-    @abstractmethod
     def get_winner(self) -> str:
         """
         :return: the winner of the game if the game is over, or None if the game is not terminal
@@ -56,5 +55,19 @@ class GameState(ABC):
         """
         param action: the action to take
         :return: the next game state after the action is taken
+        """
+        ...
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """
+        :return: a string representation of the game state
+        """
+        ...
+
+    @abstractmethod
+    def __copy__(self):
+        """
+        :return: a copy of the game state
         """
         ...

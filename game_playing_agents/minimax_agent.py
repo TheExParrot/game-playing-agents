@@ -1,5 +1,6 @@
 from .state import GameState
 from .game_agent import GameAgent
+from copy import deepcopy
 
 
 class MiniMaxAgent(GameAgent):
@@ -12,7 +13,7 @@ class MiniMaxAgent(GameAgent):
         self.max_depth = depth
 
     def get_next_action(self):
-        root = MiniMaxNode(self.current_state, self.max_depth, self.player)
+        root = MiniMaxNode(deepcopy(self.current_state), self.max_depth, self.player)
         max_action, max_value = root.minimax_search()
         return max_action
 
